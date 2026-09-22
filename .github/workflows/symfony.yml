@@ -26,8 +26,10 @@ jobs:
         php-version: '8.0'
     - uses: actions/checkout@v4
     - name: Copy .env.test.local
+      if: ${{ hashFiles('**/composer.json') != '' }}
       run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
     - name: Cache Composer packages
+      if: ${{ hashFiles('**/composer.json') != '' }}
       id: composer-cache
       uses: actions/cache@v3
       with:
@@ -36,12 +38,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
     - name: Install Dependencies
+      if: ${{ hashFiles('**/composer.json') != '' }}
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
     - name: Create Database
+      if: ${{ hashFiles('**/composer.json') != '' }}
       run: |
         mkdir -p data
         touch data/database.sqlite
     - name: Execute tests (Unit and Feature tests) via PHPUnit
+      if: ${{ hashFiles('**/composer.json') != '' }}
       env:
         DATABASE_URL: sqlite:///%kernel.project_dir%/data/database.sqlite
       run: vendor/bin/phpunit
+    - name: Skip when Symfony project files are missing
+      if: ${{ hashFiles('**/composer.json') == '' }}
+      run: echo "No composer.json found. Skipping Symfony-specific steps."
