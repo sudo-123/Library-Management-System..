@@ -1,4 +1,3 @@
-# Library-Management-System..
 # Library-Management-System
 
 Hi!, welcome to my repository. The **Library Management System (LMS)** is developed for transforming manual offline workload into online automatic system. It contains all the main 
